@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import mplfinance as mpf
 import matplotlib.pyplot as plt
 
 def readETFs(name) -> pd.DataFrame:
@@ -79,7 +80,7 @@ def prePlot(df: pd.DataFrame, ticker):
     plt.savefig(f"./Plots/ETFs/{ticker}/Low.png")
 
     plt.figure(figsize=(8, 5))
-    plt.plot(df['Date'], df['Volume in Millions'], color='royalblue', linestyle='-', linewidth=1, label='Volume')
+    plt.bar(df['Date'], df['Volume in Millions'], color='royalblue', label='Volume')
     plt.title('ETF Volume', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Volume in Millions', fontsize=14)
