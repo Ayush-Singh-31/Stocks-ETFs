@@ -56,8 +56,8 @@ class ETF:
 
     def pre_plot(self):
         if self.cleaned_df is None:
-            raise ValueError("Data must be cleaned before plotting.")
-
+            print("Data is not cleaned before plotting.")
+        self.plot_folder()
         df = self.cleaned_df
         self.plot_series(df, 'Open', 'Open Price')
         self.plot_series(df, 'Close', 'Close Price')
@@ -114,7 +114,6 @@ def main():
     etf = ETF(ticker)
     etf.describe()
     etf.clean()
-    etf.plot_folder()
     etf.pre_plot()
     etf.linearModel()
 
