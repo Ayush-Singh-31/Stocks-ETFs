@@ -1,7 +1,10 @@
 import os
+import numpy as np
 import pandas as pd
-import mplfinance as mpf
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
 def readETFs(name) -> pd.DataFrame:
     df = pd.read_csv(f"./Data/ETFs/{name}.us.txt")
@@ -44,7 +47,7 @@ def plotFolder(ticker):
 
 def prePlot(df: pd.DataFrame, ticker):
     plt.figure(figsize=(8, 5))
-    plt.plot(df['Date'], df['Open'], color='royalblue', linestyle='-', linewidth=1, label='Open Price')
+    plt.plot(df["Date"], df['Open'], color='royalblue', linestyle='-', linewidth=1, label='Open Price')
     plt.title('ETF Opening Prices', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Open Price', fontsize=14)
@@ -53,7 +56,7 @@ def prePlot(df: pd.DataFrame, ticker):
     plt.savefig(f"./Plots/ETFs/{ticker}/Open.png")
 
     plt.figure(figsize=(8, 5))
-    plt.plot(df['Date'], df['Close'], color='royalblue', linestyle='-', linewidth=1, label='Close Price')
+    plt.plot(df["Date"], df['Close'], color='royalblue', linestyle='-', linewidth=1, label='Close Price')
     plt.title('ETF Closing Prices', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Close Price', fontsize=14)
@@ -62,7 +65,7 @@ def prePlot(df: pd.DataFrame, ticker):
     plt.savefig(f"./Plots/ETFs/{ticker}/Close.png")
 
     plt.figure(figsize=(8, 5))
-    plt.plot(df['Date'], df['High'], color='royalblue', linestyle='-', linewidth=1, label='High')
+    plt.plot(df["Date"], df['High'], color='royalblue', linestyle='-', linewidth=1, label='High')
     plt.title('ETF Highs', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Highs', fontsize=14)
@@ -71,7 +74,7 @@ def prePlot(df: pd.DataFrame, ticker):
     plt.savefig(f"./Plots/ETFs/{ticker}/High.png")
 
     plt.figure(figsize=(8, 5))
-    plt.plot(df['Date'], df['Low'], color='royalblue', linestyle='-', linewidth=1, label='Low')
+    plt.plot(df["Date"], df['Low'], color='royalblue', linestyle='-', linewidth=1, label='Low')
     plt.title('ETF Lows', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Lows', fontsize=14)
@@ -80,7 +83,7 @@ def prePlot(df: pd.DataFrame, ticker):
     plt.savefig(f"./Plots/ETFs/{ticker}/Low.png")
 
     plt.figure(figsize=(8, 5))
-    plt.bar(df['Date'], df['Volume in Millions'], color='royalblue', label='Volume')
+    plt.bar(df["Date"], df['Volume in Millions'], color='royalblue', label='Volume')
     plt.title('ETF Volume', fontsize=16)
     plt.xlabel('Date', fontsize=14)
     plt.ylabel('Volume in Millions', fontsize=14)
@@ -90,6 +93,27 @@ def prePlot(df: pd.DataFrame, ticker):
 
     return
 
+def MLpreprocess(df: pd.DataFrame):
+    df["Date"] = pd.to_datetime(df["Date"])
+    df = df.drop("OpenInt", axis=1)
+    df["Day"] = df["Date"].dt.dayofweek
+    df["Month"] = df["Date"].dt.month
+    df["Year"] = df["Date"].dt.year
+    return df
+
+def mlProcessing(df: pd.DataFrame):
+    features = ['Open', 'High', 'Low', 'Volume', 'Day', 'Month', 'Year']
+    target = 'Close'
+    X = df[features]
+    Y = df[target]
+    trainX, testX, trainY, testY = train_test_split(X, Y, test_size=0.2, shuffle=False)
+    model = LinearRegression()
+    model.fit(trainX, trainY)
+    predY = model.predict(testX)
+    mse = mean_squared_error(testY, predY)
+    R2 = r2_score(testY, predY)
+    print(f"Mean Squared Error is {mse}")
+    print(f"R2 Score is {R2}")
 
 def main():
     ticker = input("Enter the ticke: ").strip().lower()
@@ -98,6 +122,8 @@ def main():
     cleanDF = clean(df)
     plotFolder(ticker)
     prePlot(cleanDF, ticker)
+    mlDF = MLpreprocess(df)
+    mlProcessing(mlDF)
 
 if __name__ == '__main__':
     main()
