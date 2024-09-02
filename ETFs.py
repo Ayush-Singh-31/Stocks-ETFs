@@ -96,7 +96,6 @@ def main():
     df = readETFs(ticker)
     describeETF(df)
     cleanDF = clean(df)
-    describeETF(cleanDF)
     plotFolder(ticker)
     prePlot(cleanDF, ticker)
 
