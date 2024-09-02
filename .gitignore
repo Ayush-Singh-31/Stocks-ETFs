@@ -1,8 +1,3 @@
-# Ignore the entire Data/ETFs folder
 Data/ETFs/
-
-# Ignore the entire Data/Stocks folder
 Data/Stocks/
-
-# Do not ignore the qqq.us.txt file
 !Data/ETFs/qqq.us.txt
