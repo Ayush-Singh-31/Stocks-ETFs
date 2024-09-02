@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -35,7 +36,12 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns={"Volume":"Volume in Millions"})
     return df
 
-def prePlot(df: pd.DataFrame):
+def plotFolder(ticker):
+    if not os.path.exists(f"./Plots/ETFs/{ticker}"):
+        os.makedirs(f"./Plots/ETFs/{ticker}")
+    return
+
+def prePlot(df: pd.DataFrame, ticker):
     plt.figure(figsize=(8, 5))
     plt.plot(df['Date'], df['Open'], color='royalblue', linestyle='-', linewidth=1, label='Open Price')
     plt.title('ETF Opening Prices', fontsize=16)
@@ -43,7 +49,7 @@ def prePlot(df: pd.DataFrame):
     plt.ylabel('Open Price', fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"./Plots/ETFs/{ticker}/Open.png")
 
     plt.figure(figsize=(8, 5))
     plt.plot(df['Date'], df['Close'], color='royalblue', linestyle='-', linewidth=1, label='Close Price')
@@ -52,7 +58,7 @@ def prePlot(df: pd.DataFrame):
     plt.ylabel('Close Price', fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"./Plots/ETFs/{ticker}/Close.png")
 
     plt.figure(figsize=(8, 5))
     plt.plot(df['Date'], df['High'], color='royalblue', linestyle='-', linewidth=1, label='High')
@@ -61,7 +67,7 @@ def prePlot(df: pd.DataFrame):
     plt.ylabel('Highs', fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"./Plots/ETFs/{ticker}/High.png")
 
     plt.figure(figsize=(8, 5))
     plt.plot(df['Date'], df['Low'], color='royalblue', linestyle='-', linewidth=1, label='Low')
@@ -70,7 +76,7 @@ def prePlot(df: pd.DataFrame):
     plt.ylabel('Lows', fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"./Plots/ETFs/{ticker}/Low.png")
 
     plt.figure(figsize=(8, 5))
     plt.plot(df['Date'], df['Volume in Millions'], color='royalblue', linestyle='-', linewidth=1, label='Volume')
@@ -79,16 +85,19 @@ def prePlot(df: pd.DataFrame):
     plt.ylabel('Volume in Millions', fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"./Plots/ETFs/{ticker}/Volume.png")
+
+    return
 
 
 def main():
     ticker = input("Enter the ticke: ").strip().lower()
-    ticker = readETFs(ticker)
-    # describeETF(ticker)
-    cleanTicker = clean(ticker)
-    describeETF(cleanTicker)
-    prePlot(cleanTicker)
+    df = readETFs(ticker)
+    describeETF(df)
+    cleanDF = clean(df)
+    describeETF(cleanDF)
+    plotFolder(ticker)
+    prePlot(cleanDF, ticker)
 
 if __name__ == '__main__':
     main()
