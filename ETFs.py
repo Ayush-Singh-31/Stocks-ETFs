@@ -10,6 +10,8 @@ class ETF:
         self.name = name
         self.df = self.read_etfs()
         self.cleaned_df = None
+        self.r2Score = None
+        self.mse = None
 
     def read_etfs(self) -> pd.DataFrame:
         df = pd.read_csv(f"./Data/ETFs/{self.name}.us.txt")
@@ -91,7 +93,7 @@ class ETF:
         df["Year"] = df["Date"].dt.year
         return df
 
-    def ml_processing(self):
+    def linearModel(self):
         if self.cleaned_df is None:
             raise ValueError("Data must be cleaned before processing.")
         
@@ -104,10 +106,8 @@ class ETF:
         model = LinearRegression()
         model.fit(trainX, trainY)
         predY = model.predict(testX)
-        mse = mean_squared_error(testY, predY)
-        R2 = r2_score(testY, predY)
-        print(f"Mean Squared Error is {mse}")
-        print(f"R2 Score is {R2}")
+        self.mse = mean_squared_error(testY, predY)
+        self.r2Score = r2_score(testY, predY)
 
 def main():
     ticker = input("Enter the ticker: ").strip().lower()
@@ -116,7 +116,7 @@ def main():
     etf.clean()
     etf.plot_folder()
     etf.pre_plot()
-    etf.ml_processing()
+    etf.linearModel()
 
 if __name__ == '__main__':
     main()
