@@ -93,7 +93,7 @@ def prePlot(df: pd.DataFrame, ticker):
 
     return
 
-def MLpreprocess(df: pd.DataFrame):
+def mlPreprocess(df: pd.DataFrame):
     df["Date"] = pd.to_datetime(df["Date"])
     df = df.drop("OpenInt", axis=1)
     df["Day"] = df["Date"].dt.dayofweek
@@ -116,13 +116,13 @@ def mlProcessing(df: pd.DataFrame):
     print(f"R2 Score is {R2}")
 
 def main():
-    ticker = input("Enter the ticke: ").strip().lower()
+    ticker = input("Enter the ticker: ").strip().lower()
     df = readETFs(ticker)
     describeETF(df)
     cleanDF = clean(df)
     plotFolder(ticker)
     prePlot(cleanDF, ticker)
-    mlDF = MLpreprocess(df)
+    mlDF = mlPreprocess(df)
     mlProcessing(mlDF)
 
 if __name__ == '__main__':
