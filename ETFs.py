@@ -1,6 +1,7 @@
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
@@ -66,24 +67,26 @@ class ETF:
         self.plot_bar(df, 'Volume in Millions', 'Volume')
 
     def plot_series(self, df, column, title):
-        plt.figure(figsize=(8, 5))
-        plt.plot(df["Date"], df[column], color='royalblue', linestyle='-', linewidth=1, label=title)
-        plt.title(f'ETF {title}', fontsize=16)
-        plt.xlabel('Date', fontsize=14)
-        plt.ylabel(title, fontsize=14)
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"./Plots/ETFs/{self.name}/{title}.png")
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df["Date"], y=df[column], mode='lines', name=title))
+        fig.update_layout(
+            title=f'ETF {title}',
+            xaxis_title='Date',
+            yaxis_title=title,
+            template='plotly_white'
+        )
+        fig.write_html(f"./Plots/ETFs/{self.name}/{title}.html")
 
     def plot_bar(self, df, column, title):
-        plt.figure(figsize=(8, 5))
-        plt.bar(df["Date"], df[column], color='royalblue', label=title)
-        plt.title(f'ETF {title}', fontsize=16)
-        plt.xlabel('Date', fontsize=14)
-        plt.ylabel(title, fontsize=14)
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"./Plots/ETFs/{self.name}/{title}.png")
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=df["Date"], y=df[column], name=title))
+        fig.update_layout(
+            title=f'ETF {title}',
+            xaxis_title='Date',
+            yaxis_title=title,
+            template='plotly_white'
+        )
+        fig.write_html(f"./Plots/ETFs/{self.name}/{title}.html")
 
     def ml_preprocess(self) -> pd.DataFrame:
         df = self.cleaned_df.copy()
